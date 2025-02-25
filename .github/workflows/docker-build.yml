@@ -1,4 +1,4 @@
-name: ${{ github.event_name == 'push' && 'Build and Push to Docker Hub' || (github.event.client_payload.trigger_type == 'auto' && 'Auto-build' || 'Manual-build') }}
+name: Build and Push
 
 on:
   push:
@@ -12,8 +12,7 @@ on:
 jobs:
   build-and-push:
     runs-on: ubuntu-latest
-    # 任务名称简化为三种情况
-    name: ${{ github.event_name == 'push' && 'Build and Push' || (github.event.client_payload.trigger_type == 'auto' && 'Auto-build' || 'Manual-build') }}
+    name: Build and Push  # 固定任务名称
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -21,7 +20,7 @@ jobs:
       - name: Display Trigger Source
         run: |
           if [ "${{ github.event_name }}" = "push" ]; then
-            echo "This build was triggered by a push to main branch"
+            echo "Build and Push: triggered by push to main branch"
           elif [ "${{ github.event.client_payload.trigger_type }}" = "auto" ]; then
             echo "Auto-build: src update on ${{ github.event.client_payload.timestamp }}"
           elif [ "${{ github.event.client_payload.trigger_type }}" = "manual" ]; then
