@@ -12,8 +12,8 @@ on:
 jobs:
   build-and-push:
     runs-on: ubuntu-latest
-    # 任务名称动态显示触发详情
-    name: ${{ github.event_name == 'push' && 'Build and Push' || (github.event.client_payload.trigger_type == 'auto' && format('Auto-build: src update on {0}', github.event.client_payload.timestamp) || format('Manual-build: dispatched on {0}', github.event.client_payload.timestamp)) }}
+    # 任务名称简化为三种情况
+    name: ${{ github.event_name == 'push' && 'Build and Push' || (github.event.client_payload.trigger_type == 'auto' && 'Auto-build' || 'Manual-build') }}
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -23,9 +23,9 @@ jobs:
           if [ "${{ github.event_name }}" = "push" ]; then
             echo "This build was triggered by a push to main branch"
           elif [ "${{ github.event.client_payload.trigger_type }}" = "auto" ]; then
-            echo "This build was triggered automatically due to Docker Hub update at ${{ github.event.client_payload.timestamp }}"
+            echo "Auto-build: src update on ${{ github.event.client_payload.timestamp }}"
           elif [ "${{ github.event.client_payload.trigger_type }}" = "manual" ]; then
-            echo "This build was triggered manually via webhook at ${{ github.event.client_payload.timestamp }}"
+            echo "Manual-build: dispatched on ${{ github.event.client_payload.timestamp }}"
           else
             echo "Unknown trigger source"
           fi
